@@ -22,21 +22,28 @@ SessionsStates = {}
 
 CURRENT_LEVEL = 0
 
+def write_to_file(sentence):
+	with open('/var/lib/snips/skills/snips-ppl/voice_message.txt', 'w') as f:
+    	f.write(sentence) 
+
 def user_starts_entry_card_problem(hermes, intent_message):
     global CURRENT_LEVEL
-    
+
     CURRENT_LEVEL = 1
     sentence = "Try again with the black stripe facing the ground on the right."
+    write_to_file(sentence)
     hermes.publish_continue_session(intent_message.session_id, sentence, INTENT_FILTER_GET_RESPONSE)
 
 def user_starts_entry_card_problem_stage_2(hermes, intent_message):
-global CURRENT_LEVEL
+	global CURRENT_LEVEL
 
 	if CURRENT_LEVEL == 1:
 		sentence = "Check that the back of your card is clean."
+		write_to_file(sentence)
 		hermes.publish_end_session(intent_message.session_id, sentence)
 	else:
 		sentence = "You must access stage one first."
+		write_to_file(sentence)
 		hermes.publish_end_session(intent_message.session_id, sentence)
 
 	CURRENT_LEVEL = 0
