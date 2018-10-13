@@ -14,22 +14,22 @@ INTENT_ENTRY_CREDIT_CARD_PROBLEM = "AIHub:EntryCreditCardProblem"
 # INTENT_INTERRUPT = "interrupt"
 # INTENT_DOES_NOT_KNOW = "does_not_know"
 
-# INTENT_FILTER_GET_ANSWER = [
-#     INTENT_ANSWER,
-#     INTENT_INTERRUPT,
-#     INTENT_DOES_NOT_KNOW
-# ]
+INTENT_FILTER_GET_ANSWER = [
+    INTENT_ANSWER,
+    INTENT_INTERRUPT,
+    INTENT_DOES_NOT_KNOW
+]
 
 SessionsStates = {}
 
-def user_starts_entry_card_problem(hermes):
+def user_starts_entry_card_problem(hermes, intent_message):
     print("User has a card problem.")
 
     sentence = "Try again with the black stripe facing the ground on the right."
 
-    session_state, sentence = tt.start_quiz(number_of_questions, tables)
+    # session_state, sentence = tt.start_quiz(number_of_questions, tables)
 
-    tt.save_session_state(SessionsStates, intent_message.session_id, session_state)
+    # tt.save_session_state(SessionsStates, intent_message.session_id, session_state)
 
     hermes.publish_continue_session(intent_message.session_id, sentence, INTENT_FILTER_GET_ANSWER)
 
