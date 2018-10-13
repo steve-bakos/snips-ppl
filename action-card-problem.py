@@ -20,23 +20,26 @@ INTENT_FILTER_GET_RESPONSE = [
 
 SessionsStates = {}
 
-current_level = 0
+CURRENT_LEVEL = 0
 
 def user_starts_entry_card_problem(hermes, intent_message):
-    current_level = 1
+    global CURRENT_LEVEL
+    
+    CURRENT_LEVEL = 1
     sentence = "Try again with the black stripe facing the ground on the right."
     hermes.publish_continue_session(intent_message.session_id, sentence, INTENT_FILTER_GET_RESPONSE)
 
 def user_starts_entry_card_problem_stage_2(hermes, intent_message):
-    
-    if current_level == 1:
+    global CURRENT_LEVEL
+
+    if CURRENT_LEVEL == 1:
 	    sentence = "Check that the back of your card is clean."
 	    hermes.publish_end_session(intent_message.session_id, sentence)
 	else:
 		sentence = "You must access stage one first."
 		hermes.publish_end_session(intent_message.session_id, sentence)
 
-	current_level = 0
+	CURRENT_LEVEL = 0
 
 def session_started(hermes, session_started_message):
     print("Session Started")
