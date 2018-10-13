@@ -41,12 +41,12 @@ def session_started(hermes, session_started_message):
     print("sessionID: {}".format(session_started_message.custom_data))
 
     session_id = session_started_message.session_id
-    custom_data = session_started_message.custom_data
+    # custom_data = session_started_message.custom_data
 
-    if custom_data:
-        if SessionsStates.get(custom_data):
-            SessionsStates[session_id] = SessionsStates[custom_data]
-            SessionsStates.pop(custom_data)
+    # if custom_data:
+    #     if SessionsStates.get(custom_data):
+    #         SessionsStates[session_id] = SessionsStates[custom_data]
+    #         SessionsStates.pop(custom_data)
 
 def session_ended(hermes, session_ended_message):
     print("Session Ended")
