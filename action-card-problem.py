@@ -14,15 +14,15 @@ INTENT_ENTRY_CREDIT_CARD_PROBLEM = "EntryCreditCardProblem"
 # INTENT_INTERRUPT = "interrupt"
 # INTENT_DOES_NOT_KNOW = "does_not_know"
 
-INTENT_FILTER_GET_ANSWER = [
-    INTENT_ANSWER,
-    INTENT_INTERRUPT,
-    INTENT_DOES_NOT_KNOW
-]
+# INTENT_FILTER_GET_ANSWER = [
+#     INTENT_ANSWER,
+#     INTENT_INTERRUPT,
+#     INTENT_DOES_NOT_KNOW
+# ]
 
 SessionsStates = {}
 
-def user_starts_entry_card_problem(hermes, intent_message):
+def user_starts_entry_card_problem(hermes):
     print("User has a card problem.")
 
     sentence = "Try again with the black stripe facing the ground on the right."
@@ -53,12 +53,12 @@ def session_ended(hermes, session_ended_message):
     session_id = session_ended_message.session_id
     session_site_id = session_ended_message.site_id
 
-    if SessionsStates.get(session_id) is not None:
-        hermes.publish_start_session_action(site_id=session_site_id,
-                                            session_init_text="",
-                                            session_init_intent_filter=INTENT_FILTER_GET_ANSWER,
-                                            session_init_can_be_enqueued=False,
-                                            custom_data=session_id)
+    # if SessionsStates.get(session_id) is not None:
+    #     hermes.publish_start_session_action(site_id=session_site_id,
+    #                                         session_init_text="",
+    #                                         session_init_intent_filter=INTENT_FILTER_GET_ANSWER,
+    #                                         session_init_can_be_enqueued=False,
+    #                                         custom_data=session_id)
 
 with Hermes(MQTT_ADDR) as h:
 
