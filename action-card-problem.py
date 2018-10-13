@@ -9,7 +9,7 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 
-INTENT_ENTRY_CREDIT_CARD_PROBLEM = "EntryCreditCardProblem"
+INTENT_ENTRY_CREDIT_CARD_PROBLEM = "AIHub:EntryCreditCardProblem"
 # INTENT_ANSWER = "give_answer"
 # INTENT_INTERRUPT = "interrupt"
 # INTENT_DOES_NOT_KNOW = "does_not_know"
