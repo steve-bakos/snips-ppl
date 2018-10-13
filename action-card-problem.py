@@ -2,9 +2,7 @@
 # -*-: coding utf-8 -*-
 
 from hermes_python.hermes import Hermes
-import times_tables as tt
 import json
-
 
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
