@@ -15,6 +15,7 @@ def on_connect(client, userdata, flags, rc):
     mqtt_client.subscribe('hermes/nlu/intentParsed')
     mqtt_client.subscribe('hermes/asr/textCaptured')
     mqtt_client.subscribe('hermes/asr/startListening')
+    mqtt_client.subscribe('hermes/nlu/query')
     mqtt_client.publish('hermes/dialogueManager/startSession',json.dumps({
             'siteId': 'default',
             'init': {
@@ -27,15 +28,17 @@ def on_message(client, userdata, msg):
    
     payload = json.loads(msg.payload.decode('utf-8'))
 
-    if msg.topic == 'hermes/asr/textCaptured':
-        print payload['text']
+    # if msg.topic == 'hermes/asr/textCaptured':
+    #     print payload['text']
 
-    if msg.topic == 'hermes/nlu/intentParsed':
-        print payload['intent']['intentName']
+    # if msg.topic == 'hermes/nlu/intentParsed':
+    #     print payload['intent']['intentName']
+
+    if msg.topic == 'hermes/nlu/query':
+        print payload
       
 
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 mqtt_client.connect(MQTT_IP_ADDR, MQTT_PORT)
 mqtt_client.loop_forever()
-# mqtt_client.loop_forever()
