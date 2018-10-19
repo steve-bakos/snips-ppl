@@ -9,13 +9,17 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 
-INTENT_ENTRY_CREDIT_CARD_PROBLEM = "AIHub:EntryCreditCardProblem"
-INTENT_CREDIT_CARD_PROBLEM_STAGE_2 = "AIHub:CreditCardProblemStage2"
+INTENT_ENTRY_CREDIT_CARD_PROBLEM = "AIHub:entry_credit_card_problem"
+INTENT_CREDIT_CARD_PROBLEM_STAGE_2_FAILED = "AIHub:credit_card_problem_lvl2_failed"
+INTENT_CREDIT_CARD_PROBLEM_STAGE_2_WORKED = "AIHub:credit_card_problem_lvl2_worked"
+INTENT_QUIT = "AIHub:Quit"
 # INTENT_INTERRUPT = "interrupt"
 # INTENT_DOES_NOT_KNOW = "does_not_know"
 
 INTENT_FILTER_GET_RESPONSE = [
-    INTENT_CREDIT_CARD_PROBLEM_STAGE_2
+    INTENT_CREDIT_CARD_PROBLEM_STAGE_2_FAILED,
+    INTENT_CREDIT_CARD_PROBLEM_STAGE_2_WORKED,
+    INTENT_QUIT
 ]
 
 SessionsStates = {}
@@ -23,8 +27,8 @@ SessionsStates = {}
 CURRENT_LEVEL = 0
 
 def write_to_file(sentence):
-	with open('/var/lib/snips/skills/snips-ppl/voice_message.txt', 'w') as f:
-    	f.write(sentence) 
+    with open('/var/lib/snips/skills/snips-ppl/voice_message.txt', 'w') as f:
+        f.write(sentence) 
 
 def user_starts_entry_card_problem(hermes, intent_message):
     global CURRENT_LEVEL
@@ -34,19 +38,34 @@ def user_starts_entry_card_problem(hermes, intent_message):
     write_to_file(sentence)
     hermes.publish_continue_session(intent_message.session_id, sentence, INTENT_FILTER_GET_RESPONSE)
 
-def user_starts_entry_card_problem_stage_2(hermes, intent_message):
-	global CURRENT_LEVEL
+def user_starts_entry_card_problem_stage_2_failed(hermes, intent_message):
+    global CURRENT_LEVEL
 
-	if CURRENT_LEVEL == 1:
-		sentence = "Check that the back of your card is clean."
-		write_to_file(sentence)
-		hermes.publish_end_session(intent_message.session_id, sentence)
-	else:
-		sentence = "You must access stage one first."
-		write_to_file(sentence)
-		hermes.publish_end_session(intent_message.session_id, sentence)
+    if CURRENT_LEVEL == 1:
+        sentence = "Check that the back of your card is clean."
+        write_to_file(sentence)
+        hermes.publish_continue_session(intent_message.session_id, sentence, INTENT_FILTER_GET_RESPONSE)
+    else:
+    	sentence = "You must access stage one first."
+    	write_to_file(sentence)
+    	hermes.publish_end_session(intent_message.session_id, sentence)
 
-	CURRENT_LEVEL = 0
+def user_starts_entry_card_problem_stage_2_worked(hermes, intent_message):
+    global CURRENT_LEVEL
+
+    if CURRENT_LEVEL == 1:
+        sentence = "Press the green button and the gate will open."
+        write_to_file(sentence)
+        hermes.publish_end_session(intent_message.session_id, sentence)
+        CURRENT_LEVEL = 0
+    else:
+        sentence = "You must access stage one first."
+        write_to_file(sentence)
+        hermes.publish_end_session(intent_message.session_id, sentence)
+
+def quit(hermes, intent_message):
+    sentence = "Shutting down."
+    hermes.publish_end_session(intent_message.session_id, sentence)
 
 def session_started(hermes, session_started_message):
     print("Session Started")
@@ -56,12 +75,6 @@ def session_started(hermes, session_started_message):
     print("sessionID: {}".format(session_started_message.custom_data))
 
     session_id = session_started_message.session_id
-    # custom_data = session_started_message.custom_data
-
-    # if custom_data:
-    #     if SessionsStates.get(custom_data):
-    #         SessionsStates[session_id] = SessionsStates[custom_data]
-    #         SessionsStates.pop(custom_data)
 
 def session_ended(hermes, session_ended_message):
     print("Session Ended")
@@ -78,7 +91,9 @@ def session_ended(hermes, session_ended_message):
 with Hermes(MQTT_ADDR) as h:
 
     h.subscribe_intent(INTENT_ENTRY_CREDIT_CARD_PROBLEM, user_starts_entry_card_problem) \
-        .subscribe_intent(INTENT_CREDIT_CARD_PROBLEM_STAGE_2, user_starts_entry_card_problem_stage_2) \
+        .subscribe_intent(INTENT_QUIT, quit) \
+        .subscribe_intent(INTENT_CREDIT_CARD_PROBLEM_STAGE_2_FAILED, user_starts_entry_card_problem_stage_2_failed) \
+        .subscribe_intent(INTENT_CREDIT_CARD_PROBLEM_STAGE_2_WORKED, user_starts_entry_card_problem_stage_2_worked) \
         .subscribe_session_ended(session_ended) \
         .subscribe_session_started(session_started) \
         .start()
